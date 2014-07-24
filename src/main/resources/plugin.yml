@@ -1,0 +1,11 @@
+name: Backpack
+version: 1.0
+author: michaelkrauty
+main: me.michaelkrauty.Backpack.Main
+commands:
+  backpack:
+    description: the backpack command
+    usage: /backpack
+permissions:
+  backpack.use:
+    description: Gives access to /backpack
