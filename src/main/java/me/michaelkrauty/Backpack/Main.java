@@ -30,6 +30,7 @@ public class Main extends JavaPlugin implements Listener {
 	public HashMap<Player, Backpack> open = new HashMap<Player, Backpack>();
 
 	public void onEnable() {
+		getLogger().info("Version 2.0");
 		main = this;
 		checkDirs();
 		config = new Config(this);
