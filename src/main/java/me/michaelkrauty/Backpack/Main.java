@@ -34,6 +34,11 @@ public class Main extends JavaPlugin implements Listener {
 		getServer().getPluginManager().registerEvents(this, this);
 		getCommand("backpack").setExecutor(new BackpackCommand(this));
 		loadBackpacks();
+		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+			public void run() {
+				saveBackpacks();
+			}
+		}, 6000, 6000);
 	}
 
 	public void onDisable() {
@@ -99,9 +104,21 @@ public class Main extends JavaPlugin implements Listener {
 		int backpackCount = 0;
 		getLogger().info("Loading backpacks...");
 		for (File file : new File(getDataFolder() + "/backpacks").listFiles()) {
-			backpacks.add(new Backpack(this, file.getName().split("\\.")[0]));
-			backpackCount++;
+			try {
+				backpacks.add(new Backpack(this, file.getName().split("\\.")[0]));
+				backpackCount++;
+			} catch (NullPointerException e) {
+				getLogger().info("Couldn't load backpack: " + file.getName() + " (NullPointerException)");
+			}
 		}
 		getLogger().info("Loaded " + backpackCount + " backpacks.");
+	}
+
+	public void saveBackpacks() {
+		getLogger().info("Saving backpacks...");
+		for (Backpack backpack : backpacks) {
+			backpack.save();
+		}
+		getLogger().info("Backpacks saved to file.");
 	}
 }

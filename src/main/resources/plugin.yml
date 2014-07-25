@@ -5,7 +5,7 @@ main: me.michaelkrauty.Backpack.Main
 commands:
   backpack:
     description: the backpack command
-    usage: /backpack
+    usage: /backpack <give|rename> [name]
 permissions:
   backpack.use:
     description: Gives access to /backpack
