@@ -12,38 +12,22 @@ import java.io.File;
  */
 public class Backpack {
 
+	private String uuid;
 	private Inventory inventory;
 	private File file;
-	private String group;
-	private String uuid;
-	private Main main;
 
-	public Backpack(Main main, String group, String uuid) {
-		this.main = main;
-		this.group = group;
+	public Backpack(Main main, String uuid) {
 		this.uuid = uuid;
-		file = new File(main.getDataFolder() + "/backpacks/" + group + "/" + uuid + ".yml");
-		loadItems();
-	}
-
-	public void loadItems() {
-		YamlConfiguration yaml = new YamlConfiguration();
-		try {
-			yaml.load(file);
-			inventory = InventoryStringDeSerializer.StringToInventory(yaml.getString("backpack"));
-		} catch (Exception e) {
+		file = new File(main.getDataFolder() + "/backpacks/" + uuid + ".yml");
+		if (!checkFile())
 			inventory = main.getServer().createInventory(null, 54, "Backpack");
-		}
+		else
+			load();
+		main.backpacks.add(this);
 	}
 
-	public void saveItems() {
-		YamlConfiguration yaml = new YamlConfiguration();
-		try {
-			yaml.set("backpack", InventoryStringDeSerializer.InventoryToString(inventory));
-			yaml.save(file);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public String getUUID() {
+		return uuid;
 	}
 
 	public Inventory getInventory() {
@@ -54,11 +38,35 @@ public class Backpack {
 		this.inventory = inventory;
 	}
 
-	public String getGroup() {
-		return group;
+	private boolean checkFile() {
+		boolean exists = file.exists();
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return exists;
 	}
 
-	public String getUUID() {
-		return uuid;
+	public void load() {
+		YamlConfiguration yaml = new YamlConfiguration();
+		try {
+			yaml.load(file);
+			inventory = InventoryStringDeSerializer.StringToInventory(yaml.getString("data"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void save() {
+		YamlConfiguration yaml = new YamlConfiguration();
+		try {
+			yaml.set("data", InventoryStringDeSerializer.InventoryToString(inventory));
+			yaml.save(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
