@@ -16,11 +16,14 @@ public class Backpack {
 	private Inventory inventory;
 	private File file;
 
-	public Backpack(Main main, String uuid) {
+	public Backpack(Main main, String uuid, String name) {
 		this.uuid = uuid;
-		file = new File(main.getDataFolder() + "/backpacks/" + uuid + ".yml");
+		file = new File(main.getDataFolder() + "/backpacks/" + uuid);
 		if (!checkFile())
-			inventory = main.getServer().createInventory(null, 54, "Backpack");
+			if (name != null)
+				inventory = main.getServer().createInventory(null, 54, name);
+			else
+				inventory = main.getServer().createInventory(null, 54, "Backpack");
 		else
 			load();
 		main.backpacks.add(this);
@@ -28,6 +31,10 @@ public class Backpack {
 
 	public String getUUID() {
 		return uuid;
+	}
+
+	public File getFile() {
+		return file;
 	}
 
 	public Inventory getInventory() {
@@ -54,7 +61,7 @@ public class Backpack {
 		YamlConfiguration yaml = new YamlConfiguration();
 		try {
 			yaml.load(file);
-			inventory = InventoryStringDeSerializer.StringToInventory(yaml.getString("data"));
+			inventory = Main.fromBase64(yaml.getString("data"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -63,7 +70,7 @@ public class Backpack {
 	public void save() {
 		YamlConfiguration yaml = new YamlConfiguration();
 		try {
-			yaml.set("data", InventoryStringDeSerializer.InventoryToString(inventory));
+			yaml.set("data", Main.toBase64(inventory));
 			yaml.save(file);
 		} catch (Exception e) {
 			e.printStackTrace();

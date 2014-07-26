@@ -39,6 +39,7 @@ public class BackpackCommand implements CommandExecutor {
 			if (args[0].equalsIgnoreCase("get") || args[0].equalsIgnoreCase("give")) {
 				String name = "Backpack";
 				if (args.length != 1) {
+					name = "";
 					for (int i = 1; i < args.length; i++) {
 						if (i == args.length - 1)
 							name = name + args[i];
@@ -54,7 +55,7 @@ public class BackpackCommand implements CommandExecutor {
 					meta.setLore(Arrays.asList(uuid.toString()));
 					backpack.setItemMeta(meta);
 					player.getInventory().addItem(backpack);
-					main.backpacks.add(new Backpack(main, uuid.toString()));
+					main.backpacks.add(new Backpack(main, uuid.toString(), name));
 					return true;
 				}
 				player.sendMessage(ChatColor.RED + "Your inventory is too full to give you a backpack!");
