@@ -1,5 +1,5 @@
 name: Backpack
-version: 2.1
+version: 2.2
 author: michaelkrauty
 main: me.michaelkrauty.Backpack.Main
 commands:
