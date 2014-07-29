@@ -1,11 +1,14 @@
 package me.michaelkrauty.Backpack;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -21,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  * Created on 7/6/2014.
@@ -103,6 +107,51 @@ public class Main extends JavaPlugin implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void onInventoryClick(InventoryClickEvent event) {
+		if (event.getCurrentItem() != null) {
+			if (event.getCurrentItem().getItemMeta() != null) {
+				if (event.getCurrentItem().getItemMeta().getLore() != null) {
+					if (event.getCurrentItem().getItemMeta().getLore().get(0) != null) {
+						Backpack b2;
+						if ((b2 = getBackpack(event.getCurrentItem().getItemMeta().getLore().get(0))) != null) {
+							Player player = (Player) event.getViewers().get(0);
+							if (event.getAction() == InventoryAction.PICKUP_HALF) {
+								if (event.getViewers() == null) {
+									main.getLogger().log(Level.SEVERE, "List of backpack viewers is null!");
+									main.getLogger().log(Level.SEVERE, "Backpack UUID: " + b2.getUUID().toString());
+									return;
+								}
+								if (b2.getInventory().getViewers().size() != 0) {
+									event.getWhoClicked().getServer().getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.RED + "Someone else already has that backpack open.");
+									event.setCancelled(true);
+									return;
+								}
+								if (open.get(player) != null) {
+									Backpack b1 = getBackpack(open.get(player));
+									b1.setInventory(player.getOpenInventory().getTopInventory());
+									open.remove(player);
+								}
+								player.getOpenInventory().close();
+								player.openInventory(b2.getInventory());
+								open.put(player, b2.getUUID());
+								event.setCancelled(true);
+								return;
+							}
+							if (open.get(player) != null) {
+								if (open.get(player).equals(event.getCurrentItem().getItemMeta().getLore().get(0))) {
+									player.sendMessage(new String[] {ChatColor.RED + "You can't move a backpack while it's open", ChatColor.GRAY + "(this is to prevent dividing by zero)"});
+									event.setCancelled(true);
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public Backpack getBackpack(String uuid) {
 		for (Backpack backpack : backpacks) {
 			if (backpack.getUUID().equals(uuid))
@@ -131,6 +180,31 @@ public class Main extends JavaPlugin implements Listener {
 			backpack.save();
 		}
 		getLogger().info("Backpacks saved to file.");
+	}
+
+	public static String color(String str) {
+		return str.replace("&0", "§0")
+				.replace("&1", "§1")
+				.replace("&2", "§2")
+				.replace("&3", "§3")
+				.replace("&4", "§4")
+				.replace("&5", "§5")
+				.replace("&6", "§6")
+				.replace("&7", "§7")
+				.replace("&8", "§8")
+				.replace("&9", "§9")
+				.replace("&a", "§a")
+				.replace("&b", "§b")
+				.replace("&c", "§c")
+				.replace("&d", "§d")
+				.replace("&e", "§e")
+				.replace("&f", "§f")
+				.replace("&k", "§k")
+				.replace("&l", "§l")
+				.replace("&m", "§m")
+				.replace("&n", "§n")
+				.replace("&o", "§o")
+				.replace("&r", "§r");
 	}
 
 	/**

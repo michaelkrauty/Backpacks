@@ -46,6 +46,7 @@ public class BackpackCommand implements CommandExecutor {
 						else
 							name = name + args[i] + " ";
 					}
+					name = Main.color(name);
 				}
 				if (player.getInventory().firstEmpty() != -1) {
 					ItemStack backpack = new ItemStack(Material.CHEST, 1);
@@ -56,6 +57,7 @@ public class BackpackCommand implements CommandExecutor {
 					backpack.setItemMeta(meta);
 					player.getInventory().addItem(backpack);
 					main.backpacks.add(new Backpack(main, uuid.toString(), name));
+					player.sendMessage(ChatColor.GRAY + "You gave yourself one backpack.");
 					return true;
 				}
 				player.sendMessage(ChatColor.RED + "Your inventory is too full to give you a backpack!");
@@ -75,6 +77,7 @@ public class BackpackCommand implements CommandExecutor {
 									else
 										name = name + args[i] + " ";
 								}
+								name = Main.color(name);
 								ItemMeta meta = player.getItemInHand().getItemMeta();
 								meta.setDisplayName(name);
 								player.getItemInHand().setItemMeta(meta);
