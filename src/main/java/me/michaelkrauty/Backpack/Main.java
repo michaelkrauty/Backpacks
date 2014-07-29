@@ -5,8 +5,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -140,9 +142,28 @@ public class Main extends JavaPlugin implements Listener {
 							}
 							if (open.get(player) != null) {
 								if (open.get(player).equals(event.getCurrentItem().getItemMeta().getLore().get(0))) {
-									player.sendMessage(new String[] {ChatColor.RED + "You can't move a backpack while it's open", ChatColor.GRAY + "(this is to prevent dividing by zero)"});
+									player.sendMessage(new String[]{ChatColor.RED + "You can't move a backpack while it's open", ChatColor.GRAY + "(this is to prevent dividing by zero)"});
 									event.setCancelled(true);
 									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onItemDespawn(ItemDespawnEvent event) {
+		if (!event.isCancelled()) {
+			if (event.getEntity() != null) {
+				if (event.getEntity().getItemStack() != null) {
+					if (event.getEntity().getItemStack().getItemMeta() != null) {
+						if (event.getEntity().getItemStack().getItemMeta().getLore() != null) {
+							if (event.getEntity().getItemStack().getItemMeta().getLore().get(0) != null) {
+								if (getBackpack(event.getEntity().getItemStack().getItemMeta().getLore().get(0)) != null) {
+									deleteBackpack(event.getEntity().getItemStack().getItemMeta().getLore().get(0));
 								}
 							}
 						}
@@ -158,6 +179,14 @@ public class Main extends JavaPlugin implements Listener {
 				return backpack;
 		}
 		return null;
+	}
+
+	public void deleteBackpack(String uuid) {
+		if (getBackpack(uuid) != null) {
+			Backpack backpack = getBackpack(uuid);
+			backpack.getFile().delete();
+			backpacks.remove(backpack);
+		}
 	}
 
 	public void loadBackpacks() {
