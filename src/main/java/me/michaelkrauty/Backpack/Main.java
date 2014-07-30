@@ -1,5 +1,6 @@
 package me.michaelkrauty.Backpack;
 
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,6 +16,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -41,17 +43,34 @@ public class Main extends JavaPlugin implements Listener {
 
 	public HashMap<Player, String> open = new HashMap<Player, String>();
 
+	public static boolean enableEconomy = true;
+	public static Economy economy = null;
+
+	public static int cost = 0;
+
 	public void onEnable() {
 		main = this;
 		checkDirs();
 		getServer().getPluginManager().registerEvents(this, this);
 		getCommand("backpack").setExecutor(new BackpackCommand(this));
 		loadBackpacks();
+		if (setupEconomy()) {
+			enableEconomy = true;
+			cost = new Config(this).getInt("cost");
+		}
+		else
+			getLogger().info("Vault is not installed on this server. Economy features disabled.");
 		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 			public void run() {
 				saveBackpacks();
 			}
 		}, 6000, 6000);
+	}
+
+	private boolean setupEconomy() {
+		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+		if (economyProvider != null) economy = economyProvider.getProvider();
+		return (economy != null);
 	}
 
 	public void onDisable() {

@@ -2,6 +2,7 @@ name: Backpack
 version: 2.2
 author: michaelkrauty
 main: me.michaelkrauty.Backpack.Main
+softdepend: [Vault]
 commands:
   backpack:
     description: the backpack command

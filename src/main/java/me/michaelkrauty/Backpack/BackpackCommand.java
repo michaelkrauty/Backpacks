@@ -36,7 +36,7 @@ public class BackpackCommand implements CommandExecutor {
 				player.sendMessage(ChatColor.DARK_RED + "WARNING: " + ChatColor.RED + "Do NOT rename a backpack with an anvil! You will never be able to access the items inside of it again!");
 				return true;
 			}
-			if (args[0].equalsIgnoreCase("get") || args[0].equalsIgnoreCase("give")) {
+			if (args[0].equalsIgnoreCase("get") || args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase("buy")) {
 				String name = "Backpack";
 				if (args.length != 1) {
 					name = "";
@@ -49,6 +49,13 @@ public class BackpackCommand implements CommandExecutor {
 					name = Main.color(name);
 				}
 				if (player.getInventory().firstEmpty() != -1) {
+					if (main.enableEconomy) {
+						if (!(main.economy.getBalance(player) >= main.cost)) {
+							player.sendMessage(ChatColor.RED + "You need at least $" + main.cost + " to get a backpack!");
+							return true;
+						}
+						main.economy.withdrawPlayer(player, main.cost);
+					}
 					ItemStack backpack = new ItemStack(Material.CHEST, 1);
 					ItemMeta meta = backpack.getItemMeta();
 					meta.setDisplayName(name);
@@ -57,7 +64,10 @@ public class BackpackCommand implements CommandExecutor {
 					backpack.setItemMeta(meta);
 					player.getInventory().addItem(backpack);
 					main.backpacks.add(new Backpack(main, uuid.toString(), name));
-					player.sendMessage(ChatColor.GRAY + "You gave yourself one backpack.");
+					if (main.cost == 0)
+						player.sendMessage(ChatColor.GRAY + "You gave yourself one backpack.");
+					else
+						player.sendMessage(ChatColor.GRAY + "You bought a backpack for $" + main.cost);
 					return true;
 				}
 				player.sendMessage(ChatColor.RED + "Your inventory is too full to give you a backpack!");
@@ -68,8 +78,7 @@ public class BackpackCommand implements CommandExecutor {
 					if (player.getItemInHand().getType() == Material.CHEST) {
 						String lore;
 						if ((lore = player.getItemInHand().getItemMeta().getLore().get(0)) != null) {
-							Backpack backpack;
-							if ((backpack = main.getBackpack(lore)) != null) {
+							if (main.getBackpack(lore) != null) {
 								String name = "";
 								for (int i = 1; i < args.length; i++) {
 									if (i == args.length - 1)
