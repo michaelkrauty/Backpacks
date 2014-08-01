@@ -1,5 +1,7 @@
 package me.michaelkrauty.Backpack;
 
+import net.gravitydevelopment.updater.Updater;
+import net.milkbowl.vault.Metrics;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,6 +24,7 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import javax.media.j3d.ImageComponent3D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -65,6 +68,22 @@ public class Main extends JavaPlugin implements Listener {
 				saveBackpacks();
 			}
 		}, 6000, 6000);
+
+		try {
+			new Metrics(this).start();
+		} catch (IOException e) {
+			getLogger().log(Level.WARNING, "Couldn't start metrics: " + e.getMessage());
+		}
+
+		Updater updater = new Updater(this, 83139, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, true);
+		if (updater.shouldUpdate(getDescription().getVersion(), updater.getLatestName())) {
+			getLogger().info("---[ Backpack Updater ]---");
+			getLogger().info("Backpack is out of date!");
+			getLogger().info("Current Version: " + getDescription().getVersion());
+			getLogger().info("Latest Version: " + updater.getLatestName());
+			getLogger().info("Download the latest version here: " + updater.getLatestFileLink());
+			getLogger().info("--------------------------");
+		}
 	}
 
 	private boolean setupEconomy() {
