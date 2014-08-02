@@ -24,7 +24,6 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import javax.media.j3d.ImageComponent3D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -46,7 +45,6 @@ public class Main extends JavaPlugin implements Listener {
 
 	public HashMap<Player, String> open = new HashMap<Player, String>();
 
-	public static boolean enableEconomy = true;
 	public static Economy economy = null;
 
 	public static int cost = 0;
@@ -57,10 +55,8 @@ public class Main extends JavaPlugin implements Listener {
 		getServer().getPluginManager().registerEvents(this, this);
 		getCommand("backpack").setExecutor(new BackpackCommand(this));
 		loadBackpacks();
-		if (setupEconomy()) {
-			enableEconomy = true;
+		if (setupEconomy())
 			cost = new Config(this).getInt("cost");
-		}
 		else
 			getLogger().info("Vault is not installed on this server. Economy features disabled.");
 		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {

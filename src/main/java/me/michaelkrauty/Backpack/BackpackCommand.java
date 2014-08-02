@@ -49,7 +49,7 @@ public class BackpackCommand implements CommandExecutor {
 					name = Main.color(name);
 				}
 				if (player.getInventory().firstEmpty() != -1) {
-					if (main.enableEconomy) {
+					if (main.economy != null) {
 						if (!(main.economy.getBalance(player) >= main.cost)) {
 							player.sendMessage(ChatColor.RED + "You need at least $" + main.cost + " to get a backpack!");
 							return true;
