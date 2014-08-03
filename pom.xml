@@ -62,6 +62,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>net.gravitydevelopment.*</include>
+                                    <include>com.mysql.jdbc.*</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

@@ -63,7 +63,7 @@ public class BackpackCommand implements CommandExecutor {
 					meta.setLore(Arrays.asList(uuid.toString()));
 					backpack.setItemMeta(meta);
 					player.getInventory().addItem(backpack);
-					main.backpacks.add(new Backpack(main, uuid.toString(), name));
+					main.backpacks.add(new Backpack(main, uuid.toString()));
 					if (main.cost == 0)
 						player.sendMessage(ChatColor.GRAY + "You gave yourself one backpack.");
 					else

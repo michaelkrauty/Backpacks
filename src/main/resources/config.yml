@@ -1,4 +1,21 @@
+### CHANGING THIS NUMBER WILL RESET YOUR CONFIG ###
+configversion: 1
+####
+#
 # How much should a backpack cost?
 # Note: This feature requires Vault: http://dev.bukkit.org/bukkit-plugins/vault/
 # Set to 0 to disable
 cost: 500
+
+# Data storage.
+# flatfile = backpacks will be saved in individual files
+# MYSQL = backpacks will be stored in the specified SQL database.
+data: flatfile
+
+# MYSQL settings (these will only be used if data saving is set to MYSQL)
+mysql:
+  database: minecraft
+  host: localhost:3306
+  user: root
+  pass: 12345
+  table: Backpacks

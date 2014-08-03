@@ -47,16 +47,21 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static Economy economy = null;
 
+	public static Config config;
+
+	public static SQL sql = null;
+
 	public static int cost = 0;
 
 	public void onEnable() {
 		main = this;
+		checkUpdate();
 		checkDirs();
 		getServer().getPluginManager().registerEvents(this, this);
 		getCommand("backpack").setExecutor(new BackpackCommand(this));
-		loadBackpacks();
+		config = new Config(this);
 		if (setupEconomy())
-			cost = new Config(this).getInt("cost");
+			cost = config.getInt("cost");
 		else
 			getLogger().info("Vault is not installed on this server. Economy features disabled.");
 		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
@@ -65,21 +70,17 @@ public class Main extends JavaPlugin implements Listener {
 			}
 		}, 6000, 6000);
 
+		if (config.getString("data").equalsIgnoreCase("mysql") || config.getString("data").equalsIgnoreCase("sql")) {
+			sql = new SQL(this);
+		} else if (!config.getString("data").equalsIgnoreCase("flatfile") && !config.getString("data").equalsIgnoreCase("file"))
+			getLogger().warning("unrecognized data format: " + config.getString("data") + ". Must either be \"flatfile\" or \"mysql\". Using flatfile...");
+
 		try {
 			new Metrics(this).start();
 		} catch (IOException e) {
 			getLogger().log(Level.WARNING, "Couldn't start metrics: " + e.getMessage());
 		}
-
-		Updater updater = new Updater(this, 83139, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, true);
-		if (updater.shouldUpdate(getDescription().getVersion(), updater.getLatestName())) {
-			getLogger().info("---[ Backpack Updater ]---");
-			getLogger().info("Backpack is out of date!");
-			getLogger().info("Current Version: " + getDescription().getVersion());
-			getLogger().info("Latest Version: " + updater.getLatestName());
-			getLogger().info("Download the latest version here: " + updater.getLatestFileLink());
-			getLogger().info("--------------------------");
-		}
+		loadBackpacks();
 	}
 
 	private boolean setupEconomy() {
@@ -89,18 +90,32 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	public void onDisable() {
-		for (Backpack backpack : backpacks) {
-			backpack.save();
-		}
+		saveBackpacks();
 		backpacks.clear();
+		if (sql != null)
+			sql.closeConnection();
 	}
 
 	public void checkDirs() {
 		if (!getDataFolder().exists())
 			getDataFolder().mkdir();
-		File backpacks = new File(getDataFolder() + "/backpacks");
-		if (!backpacks.exists())
-			backpacks.mkdir();
+		if (sql == null) {
+			File backpacks = new File(getDataFolder() + "/backpacks");
+			if (!backpacks.exists())
+				backpacks.mkdir();
+		}
+	}
+
+	private void checkUpdate() {
+		Updater updater = new Updater(this, 83139, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, true);
+		if (updater.shouldUpdate(getDescription().getName() + " v" + getDescription().getVersion(), updater.getLatestName())) {
+			getLogger().info("---[ Backpack Updater ]---");
+			getLogger().info("Backpack is out of date!");
+			getLogger().info("Current Version: " + getDescription().getVersion());
+			getLogger().info("Latest Version: " + updater.getLatestName());
+			getLogger().info("Download the latest version here: " + updater.getLatestFileLink());
+			getLogger().info("--------------------------");
+		}
 	}
 
 	@EventHandler
@@ -224,17 +239,21 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	public void loadBackpacks() {
-		int backpackCount = 0;
 		getLogger().info("Loading backpacks...");
-		for (File file : new File(getDataFolder() + "/backpacks").listFiles()) {
-			try {
-				backpacks.add(new Backpack(this, file.getName().split("\\.")[0], null));
-				backpackCount++;
-			} catch (NullPointerException e) {
-				getLogger().info("Couldn't load backpack: " + file.getName() + " (NullPointerException)");
+		if (!backpacks.isEmpty())
+			backpacks.clear();
+		if (sql != null) {
+			sql.loadAllBackpacks();
+		} else {
+			for (File file : new File(getDataFolder() + "/backpacks").listFiles()) {
+				try {
+					backpacks.add(new Backpack(this, file.getName().split("\\.")[0]));
+				} catch (NullPointerException e) {
+					getLogger().info("Couldn't load backpack: " + file.getName() + " (NullPointerException)");
+				}
 			}
 		}
-		getLogger().info("Loaded " + backpackCount + " backpacks.");
+		getLogger().info("Loaded " + backpacks.size() + " backpacks.");
 	}
 
 	public void saveBackpacks() {
@@ -242,7 +261,7 @@ public class Main extends JavaPlugin implements Listener {
 		for (Backpack backpack : backpacks) {
 			backpack.save();
 		}
-		getLogger().info("Backpacks saved to file.");
+		getLogger().info("Saved " + backpacks.size() + " backpacks.");
 	}
 
 	public static String color(String str) {

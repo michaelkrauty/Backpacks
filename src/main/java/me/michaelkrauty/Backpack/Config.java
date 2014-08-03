@@ -54,4 +54,8 @@ public class Config {
 	public int getInt(String path) {
 		return config.getInt(path);
 	}
+
+	public String getString(String path) {
+		return config.getString(path);
+	}
 }

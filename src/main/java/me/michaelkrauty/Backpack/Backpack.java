@@ -12,21 +12,17 @@ import java.io.File;
  */
 public class Backpack {
 
+	private static Main main;
+
 	private String uuid;
 	private Inventory inventory;
 	private File file;
 
-	public Backpack(Main main, String uuid, String name) {
+	public Backpack(Main main, String uuid) {
+		this.main = main;
 		this.uuid = uuid;
 		file = new File(main.getDataFolder() + "/backpacks/" + uuid);
-		if (!checkFile())
-			if (name != null)
-				inventory = main.getServer().createInventory(null, 54, name);
-			else
-				inventory = main.getServer().createInventory(null, 54, "Backpack");
-		else
-			load();
-		main.backpacks.add(this);
+		load();
 	}
 
 	public String getUUID() {
@@ -45,9 +41,15 @@ public class Backpack {
 		this.inventory = inventory;
 	}
 
-	private boolean checkFile() {
-		boolean exists = file.exists();
-		if (!file.exists()) {
+	private boolean checkExistance() {
+		boolean exists = true;
+		if (main.sql != null) {
+			if (!main.sql.backpackExists(uuid)) {
+				exists = false;
+				main.sql.addBackpack(uuid);
+			}
+		} else if (!file.exists()) {
+			exists = false;
 			try {
 				file.createNewFile();
 			} catch (Exception e) {
@@ -58,22 +60,45 @@ public class Backpack {
 	}
 
 	public void load() {
-		YamlConfiguration yaml = new YamlConfiguration();
-		try {
-			yaml.load(file);
-			inventory = Main.fromBase64(yaml.getString("data"));
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (main.sql != null) {
+			try {
+				if (main.sql.backpackExists(uuid))
+					inventory = Main.fromBase64(main.sql.getBackpackInventory(uuid));
+				else
+					inventory = main.getServer().createInventory(null, 54, "Backpack");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				if (file.exists()) {
+					YamlConfiguration yaml = new YamlConfiguration();
+					yaml.load(file);
+					inventory = Main.fromBase64(yaml.getString("data"));
+				} else
+					inventory = main.getServer().createInventory(null, 54, "Backpack");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	public void save() {
-		YamlConfiguration yaml = new YamlConfiguration();
-		try {
-			yaml.set("data", Main.toBase64(inventory));
-			yaml.save(file);
-		} catch (Exception e) {
-			e.printStackTrace();
+		checkExistance();
+		if (main.sql != null) {
+			try {
+				main.sql.updateBackpack(uuid, Main.toBase64(inventory));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			YamlConfiguration yaml = new YamlConfiguration();
+			try {
+				yaml.set("data", Main.toBase64(inventory));
+				yaml.save(file);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
