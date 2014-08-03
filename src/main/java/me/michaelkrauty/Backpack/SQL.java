@@ -137,4 +137,16 @@ public class SQL {
 			e.printStackTrace();
 		}
 	}
+
+	public synchronized void removeBackpack(String uuid) {
+		try {
+			openConnection();
+			PreparedStatement sql = connection
+					.prepareStatement("DELETE FROM `" + table + "` WHERE `uuid`=?;");
+			sql.setString(1, uuid);
+			sql.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

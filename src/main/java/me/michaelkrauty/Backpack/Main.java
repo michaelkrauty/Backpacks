@@ -61,15 +61,10 @@ public class Main extends JavaPlugin implements Listener {
 		getServer().getPluginManager().registerEvents(this, this);
 		getCommand("backpack").setExecutor(new BackpackCommand(this));
 		config = new Config(this);
-		if (setupEconomy())
+		if (getServer().getPluginManager().getPlugin("Vault").isEnabled() && setupEconomy())
 			cost = config.getInt("cost");
 		else
 			getLogger().info("Vault is not installed on this server. Economy features disabled.");
-		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
-			public void run() {
-				saveBackpacks();
-			}
-		}, 6000, 6000);
 
 		if (config.getString("data").equalsIgnoreCase("mysql") || config.getString("data").equalsIgnoreCase("sql")) {
 			sql = new SQL(this);
@@ -237,8 +232,17 @@ public class Main extends JavaPlugin implements Listener {
 	public void deleteBackpack(String uuid) {
 		if (getBackpack(uuid) != null) {
 			Backpack backpack = getBackpack(uuid);
-			backpack.getFile().delete();
 			backpacks.remove(backpack);
+			if (backpack.getFile().exists())
+				backpack.getFile().delete();
+			if (sql != null) {
+				final String finalUUID = uuid;
+				getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
+					public void run() {
+						sql.removeBackpack(finalUUID);
+					}
+				});
+			}
 		}
 	}
 

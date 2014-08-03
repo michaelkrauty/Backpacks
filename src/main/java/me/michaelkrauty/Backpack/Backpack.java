@@ -39,6 +39,11 @@ public class Backpack {
 
 	public void setInventory(Inventory inventory) {
 		this.inventory = inventory;
+		main.getServer().getScheduler().scheduleAsyncDelayedTask(main, new Runnable() {
+			public void run() {
+				save();
+			}
+		});
 	}
 
 	private boolean checkExistance() {
