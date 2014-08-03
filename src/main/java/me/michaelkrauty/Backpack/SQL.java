@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 
 /**
  * Created on 8/2/2014.
@@ -117,7 +116,8 @@ public class SQL {
 			int items = result.getRow();
 			result.first();
 			for (int i = 0; i < items; i++) {
-				main.backpacks.add(new Backpack(main, result.getString("uuid")));
+				if (main.getBackpack(result.getString("uuid")) == null)
+					main.backpacks.add(new Backpack(main, result.getString("uuid")));
 				result.next();
 			}
 			sql.close();

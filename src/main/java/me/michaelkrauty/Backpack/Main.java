@@ -242,15 +242,14 @@ public class Main extends JavaPlugin implements Listener {
 		getLogger().info("Loading backpacks...");
 		if (!backpacks.isEmpty())
 			backpacks.clear();
-		if (sql != null) {
+		if (sql != null)
 			sql.loadAllBackpacks();
-		} else {
-			for (File file : new File(getDataFolder() + "/backpacks").listFiles()) {
-				try {
-					backpacks.add(new Backpack(this, file.getName().split("\\.")[0]));
-				} catch (NullPointerException e) {
-					getLogger().info("Couldn't load backpack: " + file.getName() + " (NullPointerException)");
-				}
+		for (File file : new File(getDataFolder() + "/backpacks").listFiles()) {
+			try {
+				if (main.getBackpack(file.getName()) == null)
+					backpacks.add(new Backpack(this, file.getName()));
+			} catch (NullPointerException e) {
+				getLogger().info("Couldn't load backpack: " + file.getName() + " (NullPointerException)");
 			}
 		}
 		getLogger().info("Loaded " + backpacks.size() + " backpacks.");

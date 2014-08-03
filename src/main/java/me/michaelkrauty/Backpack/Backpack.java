@@ -62,7 +62,13 @@ public class Backpack {
 	public void load() {
 		if (main.sql != null) {
 			try {
-				if (main.sql.backpackExists(uuid))
+				if (file.exists()) {
+					YamlConfiguration yaml = new YamlConfiguration();
+					yaml.load(file);
+					inventory = Main.fromBase64(yaml.getString("data"));
+					main.sql.updateBackpack(uuid, Main.toBase64(inventory));
+					file.delete();
+				} else if (main.sql.backpackExists(uuid))
 					inventory = Main.fromBase64(main.sql.getBackpackInventory(uuid));
 				else
 					inventory = main.getServer().createInventory(null, 54, "Backpack");
