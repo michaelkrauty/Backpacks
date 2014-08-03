@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -90,6 +91,9 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	public void onDisable() {
+		for (Map.Entry<Player, String> entry : open.entrySet()) {
+			entry.getKey().closeInventory();
+		}
 		saveBackpacks();
 		backpacks.clear();
 		if (sql != null)
