@@ -32,7 +32,8 @@ public class SQL {
 
 	public synchronized void openConnection() {
 		try {
-			connection = DriverManager.getConnection(jdbc, user, pass);
+			if (connection == null)
+				connection = DriverManager.getConnection(jdbc, user, pass);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -54,7 +55,7 @@ public class SQL {
 		openConnection();
 		boolean res = true;
 		try {
-			PreparedStatement stmt = connection.prepareStatement("CREATE TABLE IF NOT EXISTS `" + table + "` (uuid varchar(256) PRIMARY KEY, inventory varchar(8000));");
+			PreparedStatement stmt = connection.prepareStatement("CREATE TABLE IF NOT EXISTS `" + table + "` (uuid varchar(256) PRIMARY KEY, inventory longtext);");
 			stmt.execute();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -85,7 +86,6 @@ public class SQL {
 			sql.setString(1, uuid);
 			sql.setString(2, Main.toBase64(main.getServer().createInventory(null, 54)));
 			sql.executeUpdate();
-			sql.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -120,7 +120,6 @@ public class SQL {
 					main.backpacks.add(new Backpack(main, result.getString("uuid")));
 				result.next();
 			}
-			sql.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -134,7 +133,6 @@ public class SQL {
 			sql.setString(1, inventory);
 			sql.setString(2, uuid);
 			sql.executeUpdate();
-			sql.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
