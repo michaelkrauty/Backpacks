@@ -54,17 +54,26 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static int cost = 0;
 
+	public int configVersion = 2;
+
 	public void onEnable() {
 		main = this;
-		checkUpdate();
 		checkDirs();
 		getServer().getPluginManager().registerEvents(this, this);
 		getCommand("backpack").setExecutor(new BackpackCommand(this));
 		config = new Config(this);
-		if (getServer().getPluginManager().getPlugin("Vault").isEnabled() && setupEconomy())
-			cost = config.getInt("cost");
-		else
+		if (config.getInt("configversion") != configVersion)
+			config.update();
+		if (config.getBoolean("checkupdate"))
+			checkUpdate();
+		try {
+			if (getServer().getPluginManager().getPlugin("Vault") != null) {
+				if (setupEconomy())
+					cost = config.getInt("cost");
+			}
+		} catch (NullPointerException e) {
 			getLogger().info("Vault is not installed on this server. Economy features disabled.");
+		}
 
 		if (config.getString("data").equalsIgnoreCase("mysql") || config.getString("data").equalsIgnoreCase("sql")) {
 			sql = new SQL(this);
@@ -72,7 +81,7 @@ public class Main extends JavaPlugin implements Listener {
 			getLogger().warning("unrecognized data format: " + config.getString("data") + ". Must either be \"flatfile\" or \"mysql\". Using flatfile...");
 
 		try {
-			new Metrics(this).start();
+			new me.michaelkrauty.Backpack.Metrics(this).start();
 		} catch (IOException e) {
 			getLogger().log(Level.WARNING, "Couldn't start metrics: " + e.getMessage());
 		}

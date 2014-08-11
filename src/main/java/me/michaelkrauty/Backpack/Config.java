@@ -51,11 +51,28 @@ public class Config {
 		}
 	}
 
+	public void update() {
+		if (config.getString("checkupdate") == null)
+			config.set("checkupdate", true);
+		if (config.getString("configversion") == null)
+			config.set("configversion", main.configVersion);
+		try {
+			config.save(configFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		reload();
+	}
+
 	public int getInt(String path) {
 		return config.getInt(path);
 	}
 
 	public String getString(String path) {
 		return config.getString(path);
+	}
+
+	public boolean getBoolean(String path) {
+		return config.getBoolean(path);
 	}
 }

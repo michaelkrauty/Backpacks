@@ -1,11 +1,15 @@
 ### CHANGING THIS NUMBER WILL RESET YOUR CONFIG ###
-configversion: 1
+configversion: 2
 ####
 #
 # How much should a backpack cost?
 # Note: This feature requires Vault: http://dev.bukkit.org/bukkit-plugins/vault/
 # Set to 0 to disable
 cost: 500
+
+# Update checking.
+# Set to false to disable checking for newer versions of the plugin
+checkupdate: true
 
 # Data storage.
 # flatfile = backpacks will be saved in individual files
