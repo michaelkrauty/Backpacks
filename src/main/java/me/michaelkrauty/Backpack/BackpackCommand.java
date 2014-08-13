@@ -26,14 +26,16 @@ public class BackpackCommand implements CommandExecutor {
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+		if (!(sender instanceof Player)) {
+			sender.sendMessage(ChatColor.RED + "Only players can use this command.");
+			return true;
+		}
 		final Player player = (Player) sender;
 		if (sender.hasPermission("backpack.use")) {
 			if (args.length == 0) {
-				player.sendMessage(ChatColor.GREEN + "--[Backpacks]--");
-				player.sendMessage(ChatColor.RED + "/backpack get [name]" + ChatColor.GRAY + ": Get a backpack ([name] is optional)");
-				player.sendMessage(ChatColor.RED + "/backpack name <name>" + ChatColor.GRAY + ": Name the backpack you are holding.");
-				player.sendMessage(ChatColor.DARK_GREEN + "Backpacks are physical items. You can carry as many as you want. If you drop a backpack, anyone can pick it up & get the items inside.");
-				player.sendMessage(ChatColor.DARK_RED + "WARNING: " + ChatColor.RED + "Do NOT rename a backpack with an anvil! You will never be able to access the items inside of it again!");
+				for (String message : main.locale.getMessage("backpack_command")) {
+					sender.sendMessage(main.color(message));
+				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("get") || args[0].equalsIgnoreCase("give") || args[0].equalsIgnoreCase("buy")) {
@@ -51,7 +53,7 @@ public class BackpackCommand implements CommandExecutor {
 				if (player.getInventory().firstEmpty() != -1) {
 					if (main.economy != null) {
 						if (!(main.economy.getBalance(player) >= main.cost)) {
-							player.sendMessage(ChatColor.RED + "You need at least $" + main.cost + " to get a backpack!");
+							player.sendMessage(main.locale.getMessage("insufficient_funds"));
 							return true;
 						}
 						main.economy.withdrawPlayer(player, main.cost);
@@ -64,13 +66,21 @@ public class BackpackCommand implements CommandExecutor {
 					backpack.setItemMeta(meta);
 					player.getInventory().addItem(backpack);
 					main.backpacks.add(new Backpack(main, uuid.toString()));
-					if (main.cost == 0)
-						player.sendMessage(ChatColor.GRAY + "You gave yourself one backpack.");
-					else
-						player.sendMessage(ChatColor.GRAY + "You bought a backpack for $" + main.cost);
+					if (main.cost == 0) {
+						for (String message : main.locale.getMessage("got_backpack_without_price")) {
+							player.sendMessage(message);
+						}
+					}
+					else {
+						for (String message : main.locale.getMessage("bought_backpack")) {
+							player.sendMessage(message.replace("<backpack_cost>", Integer.toString(main.cost)));
+						}
+					}
 					return true;
 				}
-				player.sendMessage(ChatColor.RED + "Your inventory is too full to give you a backpack!");
+				for (String message : main.locale.getMessage("inventory_full")) {
+					player.sendMessage(message);
+				}
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("name") || args[0].equalsIgnoreCase("rename")) {
@@ -90,19 +100,25 @@ public class BackpackCommand implements CommandExecutor {
 								ItemMeta meta = player.getItemInHand().getItemMeta();
 								meta.setDisplayName(name);
 								player.getItemInHand().setItemMeta(meta);
-								player.sendMessage(ChatColor.GRAY + "Renamed this backpack to " + name);
+								for (String message : main.locale.getMessage("renamed_backpack")) {
+									player.sendMessage(message.replace("<new_name>", name));
+								}
 								return true;
 							}
 						}
 					}
 				}
-				player.sendMessage(ChatColor.RED + "Make sure you're holding a backpack in your hand.");
+				for (String message : main.locale.getMessage("backpack_not_in_hand")) {
+					player.sendMessage(message);
+				}
 				return true;
 			}
 			player.sendMessage(ChatColor.RED + cmd.getUsage());
 			return true;
 		}
-		player.sendMessage(ChatColor.RED + "You don't have permission to do that.");
+		for (String message : main.locale.getMessage("permission_denied")) {
+			player.sendMessage(message);
+		}
 		return true;
 	}
 }

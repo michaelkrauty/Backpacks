@@ -16,16 +16,19 @@ public class Config {
 
 	private Main main;
 
-	private File configFile = new File(Main.main.getDataFolder() + "/config.yml");
+	private File configFile = new File(Main.main.getDataFolder(), "config.yml");
 	private YamlConfiguration config = new YamlConfiguration();
 
 	public Config(Main instance) {
 		main = instance;
 		checkFile();
+		update();
 		reload();
 	}
 
 	private void checkFile() {
+		if (!main.getDataFolder().exists())
+			main.getDataFolder().mkdir();
 		if (!configFile.exists()) {
 			try {
 				configFile.createNewFile();
@@ -52,16 +55,28 @@ public class Config {
 	}
 
 	public void update() {
-		if (config.getString("checkupdate") == null)
-			config.set("checkupdate", true);
-		if (config.getString("configversion") == null)
-			config.set("configversion", main.configVersion);
 		try {
+			reload();
+			if (config.getString("checkupdate") == null)
+				config.set("checkupdate", config.getBoolean("checkupdate"));
+			if (config.getString("mysql.database") == null)
+				config.set("mysql.database", config.getString("mysql.database"));
+			if (config.getString("mysql.host") == null)
+				config.set("mysql.host", config.getString("mysql.host"));
+			if (config.getString("mysql.user") == null)
+				config.set("mysql.user", config.getString("mysql.user"));
+			if (config.getString("mysql.pass") == null)
+				config.set("mysql.pass", config.getString("mysql.pass"));
+			if (config.getString("mysql.table") == null)
+				config.set("mysql.table", config.getString("mysql.table"));
+			if (config.getString("data") == null)
+				config.set("data", config.getString("data"));
+			if (config.getString("cost") == null)
+				config.set("cost", config.getInt("cost"));
 			config.save(configFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		reload();
 	}
 
 	public int getInt(String path) {

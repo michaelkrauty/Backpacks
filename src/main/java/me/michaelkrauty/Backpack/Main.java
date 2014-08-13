@@ -1,7 +1,6 @@
 package me.michaelkrauty.Backpack;
 
 import net.gravitydevelopment.updater.Updater;
-import net.milkbowl.vault.Metrics;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,6 +48,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static Economy economy = null;
 
 	public static Config config;
+	public static Locale locale;
 
 	public static SQL sql = null;
 
@@ -58,12 +58,10 @@ public class Main extends JavaPlugin implements Listener {
 
 	public void onEnable() {
 		main = this;
-		checkDirs();
 		getServer().getPluginManager().registerEvents(this, this);
 		getCommand("backpack").setExecutor(new BackpackCommand(this));
 		config = new Config(this);
-		if (config.getInt("configversion") != configVersion)
-			config.update();
+		locale = new Locale(this);
 		if (config.getBoolean("checkupdate"))
 			checkUpdate();
 		try {
@@ -85,6 +83,11 @@ public class Main extends JavaPlugin implements Listener {
 		} catch (IOException e) {
 			getLogger().log(Level.WARNING, "Couldn't start metrics: " + e.getMessage());
 		}
+		if (sql == null) {
+			File file = new File(getDataFolder(), "backpacks");
+			if (!file.exists())
+				file.mkdir();
+		}
 		loadBackpacks();
 	}
 
@@ -102,16 +105,6 @@ public class Main extends JavaPlugin implements Listener {
 		backpacks.clear();
 		if (sql != null)
 			sql.closeConnection();
-	}
-
-	public void checkDirs() {
-		if (!getDataFolder().exists())
-			getDataFolder().mkdir();
-		if (sql == null) {
-			File backpacks = new File(getDataFolder() + "/backpacks");
-			if (!backpacks.exists())
-				backpacks.mkdir();
-		}
 	}
 
 	private void checkUpdate() {
