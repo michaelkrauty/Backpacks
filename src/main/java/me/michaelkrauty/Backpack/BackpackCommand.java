@@ -53,7 +53,9 @@ public class BackpackCommand implements CommandExecutor {
 				if (player.getInventory().firstEmpty() != -1) {
 					if (main.economy != null) {
 						if (!(main.economy.getBalance(player) >= main.cost)) {
-							player.sendMessage(main.locale.getMessage("insufficient_funds"));
+							for (String message : main.locale.getMessage("insufficient_funds")) {
+								player.sendMessage(main.color(message));
+							}
 							return true;
 						}
 						main.economy.withdrawPlayer(player, main.cost);
@@ -68,18 +70,18 @@ public class BackpackCommand implements CommandExecutor {
 					main.backpacks.add(new Backpack(main, uuid.toString()));
 					if (main.cost == 0) {
 						for (String message : main.locale.getMessage("got_backpack_without_price")) {
-							player.sendMessage(message);
+							player.sendMessage(main.color(message));
 						}
 					}
 					else {
 						for (String message : main.locale.getMessage("bought_backpack")) {
-							player.sendMessage(message.replace("<backpack_cost>", Integer.toString(main.cost)));
+							player.sendMessage(main.color(message.replace("<backpack_cost>", Integer.toString(main.cost))));
 						}
 					}
 					return true;
 				}
 				for (String message : main.locale.getMessage("inventory_full")) {
-					player.sendMessage(message);
+					player.sendMessage(main.color(message));
 				}
 				return true;
 			}
@@ -101,7 +103,7 @@ public class BackpackCommand implements CommandExecutor {
 								meta.setDisplayName(name);
 								player.getItemInHand().setItemMeta(meta);
 								for (String message : main.locale.getMessage("renamed_backpack")) {
-									player.sendMessage(message.replace("<new_name>", name));
+									player.sendMessage(main.color(message.replace("<new_name>", name)));
 								}
 								return true;
 							}
@@ -109,7 +111,7 @@ public class BackpackCommand implements CommandExecutor {
 					}
 				}
 				for (String message : main.locale.getMessage("backpack_not_in_hand")) {
-					player.sendMessage(message);
+					player.sendMessage(main.color(message));
 				}
 				return true;
 			}
@@ -117,7 +119,7 @@ public class BackpackCommand implements CommandExecutor {
 			return true;
 		}
 		for (String message : main.locale.getMessage("permission_denied")) {
-			player.sendMessage(message);
+			player.sendMessage(main.color(message));
 		}
 		return true;
 	}

@@ -2,7 +2,11 @@ package me.michaelkrauty.Backpack;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
  * Created on 8/11/2014.
@@ -50,8 +54,17 @@ public class Locale {
 		}
 	}
 
-	public String[] getMessage(String path) {
-		return (String[]) locale.getStringList(path).toArray();
+	public ArrayList<String> getMessage(String path) {
+		ArrayList<String> ret;
+		if (locale.getStringList(path).size() != 0)
+			ret = new ArrayList<String>(locale.getStringList(path));
+		else {
+			ret = new ArrayList<String>();
+			ret.add(locale.getString(path));
+		}
+		return ret;
+
+
 	}
 
 	public int getInt(String path) {
