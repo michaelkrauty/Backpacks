@@ -34,6 +34,8 @@ public class SQL {
 		try {
 			if (connection == null)
 				connection = DriverManager.getConnection(jdbc, user, pass);
+			if (connection.isClosed())
+				connection = DriverManager.getConnection(jdbc, user, pass);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

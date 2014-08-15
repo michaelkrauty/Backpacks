@@ -54,8 +54,6 @@ public class Main extends JavaPlugin implements Listener {
 
 	public static int cost = 0;
 
-	public int configVersion = 2;
-
 	public void onEnable() {
 		main = this;
 		getServer().getPluginManager().registerEvents(this, this);
@@ -101,7 +99,6 @@ public class Main extends JavaPlugin implements Listener {
 		for (Map.Entry<Player, String> entry : open.entrySet()) {
 			entry.getKey().closeInventory();
 		}
-		saveBackpacks();
 		backpacks.clear();
 		if (sql != null)
 			sql.closeConnection();
