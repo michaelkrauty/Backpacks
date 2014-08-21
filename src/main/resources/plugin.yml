@@ -10,3 +10,5 @@ commands:
 permissions:
   backpack.use:
     description: Gives access to /backpack
+  backpack.nocooldown:
+    description: Disables spawning cooldown
