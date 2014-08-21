@@ -60,6 +60,16 @@ public class BackpackCommand implements CommandExecutor {
 						}
 						main.economy.withdrawPlayer(player, main.cost);
 					}
+
+                    if (main.cooldowns.get(player.getUniqueId()) != null) {
+                        if (main.cooldowns.get(player.getUniqueId()) != 0) {
+                            for (String message : main.locale.getMessage("cooldown")) {
+                                player.sendMessage(main.color(message).replace("<cooldown>", Integer.toString(main.cooldowns.get(player.getUniqueId()))));
+                            }
+                            return true;
+                        }
+                    }
+
 					ItemStack backpack = new ItemStack(Material.CHEST, 1);
 					ItemMeta meta = backpack.getItemMeta();
 					meta.setDisplayName(name);
@@ -78,6 +88,8 @@ public class BackpackCommand implements CommandExecutor {
 							player.sendMessage(main.color(message.replace("<backpack_cost>", Integer.toString(main.cost))));
 						}
 					}
+                    if (!player.hasPermission("backpack.nocooldown"))
+                        main.cooldowns.put(player.getUniqueId(), main.cooldown);
 					return true;
 				}
 				for (String message : main.locale.getMessage("inventory_full")) {

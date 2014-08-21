@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**
@@ -45,6 +46,8 @@ public class Main extends JavaPlugin implements Listener {
 
 	public HashMap<Player, String> open = new HashMap<Player, String>();
 
+    public HashMap<UUID, Integer> cooldowns = new HashMap<UUID, Integer>();
+
 	public static Economy economy = null;
 
 	public static Config config;
@@ -53,6 +56,7 @@ public class Main extends JavaPlugin implements Listener {
 	public static SQL sql = null;
 
 	public static int cost = 0;
+    public static int cooldown = 0;
 
 	public void onEnable() {
 		main = this;
@@ -62,6 +66,7 @@ public class Main extends JavaPlugin implements Listener {
 		locale = new Locale(this);
 		if (config.getBoolean("checkupdate"))
 			checkUpdate();
+        cooldown = config.getInt("cooldown");
 		try {
 			if (getServer().getPluginManager().getPlugin("Vault") != null) {
 				if (setupEconomy())
@@ -86,7 +91,8 @@ public class Main extends JavaPlugin implements Listener {
 			if (!file.exists())
 				file.mkdir();
 		}
-		loadBackpacks();
+        cooldowns = new Cooldowns(this).getCooldowns();
+        loadBackpacks();
 	}
 
 	private boolean setupEconomy() {
@@ -96,6 +102,10 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	public void onDisable() {
+        Cooldowns cd = new Cooldowns(this);
+        for (Map.Entry<UUID, Integer> entry : cooldowns.entrySet()) {
+            cd.setCooldown(entry.getKey(), entry.getValue());
+        }
 		for (Map.Entry<Player, String> entry : open.entrySet()) {
 			entry.getKey().closeInventory();
 		}

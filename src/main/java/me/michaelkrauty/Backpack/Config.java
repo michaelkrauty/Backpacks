@@ -58,21 +58,23 @@ public class Config {
 		try {
 			reload();
 			if (config.getString("checkupdate") == null)
-				config.set("checkupdate", config.getBoolean("checkupdate"));
+				config.set("checkupdate", true);
 			if (config.getString("mysql.database") == null)
-				config.set("mysql.database", config.getString("mysql.database"));
+				config.set("mysql.database", "minecraft");
 			if (config.getString("mysql.host") == null)
-				config.set("mysql.host", config.getString("mysql.host"));
+				config.set("mysql.host", "localhost");
 			if (config.getString("mysql.user") == null)
-				config.set("mysql.user", config.getString("mysql.user"));
+				config.set("mysql.user", "root");
 			if (config.getString("mysql.pass") == null)
-				config.set("mysql.pass", config.getString("mysql.pass"));
+				config.set("mysql.pass", "12345");
 			if (config.getString("mysql.table") == null)
-				config.set("mysql.table", config.getString("mysql.table"));
+				config.set("mysql.table", "Backpacks");
 			if (config.getString("data") == null)
-				config.set("data", config.getString("data"));
+				config.set("data", "flatfile");
 			if (config.getString("cost") == null)
-				config.set("cost", config.getInt("cost"));
+				config.set("cost", 100);
+            if (config.getString("cooldown") == null)
+                config.set("cooldown", 300);
 			config.save(configFile);
 		} catch (Exception e) {
 			e.printStackTrace();
