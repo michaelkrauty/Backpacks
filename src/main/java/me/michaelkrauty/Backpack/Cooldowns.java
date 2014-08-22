@@ -48,6 +48,14 @@ public class Cooldowns {
 		}
 	}
 
+	public void save() {
+		try {
+			data.save(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
     public void setCooldown(UUID uuid, int cooldown) {
         data.set(uuid.toString(), cooldown);
     }
@@ -58,8 +66,8 @@ public class Cooldowns {
 
     public HashMap<UUID, Integer> getCooldowns() {
         HashMap<UUID, Integer> cooldowns = new HashMap<UUID, Integer>();
-        for (Map.Entry<String, Integer> entry : ((HashMap<String, Integer>) data.getMapList("")).entrySet()) {
-            cooldowns.put(UUID.fromString(entry.getKey()), entry.getValue());
+        for (String entry : data.getConfigurationSection("").getKeys(false)) {
+			cooldowns.put(UUID.fromString(entry), data.getInt(entry));
         }
         return cooldowns;
     }

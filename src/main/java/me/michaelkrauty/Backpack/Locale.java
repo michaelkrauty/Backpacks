@@ -78,4 +78,29 @@ public class Locale {
 	public boolean getBoolean(String path) {
 		return locale.getBoolean(path);
 	}
+
+	public void update() {
+		// TODO: out of time now, finish later
+				"renamed_backpack: '&7Renamed this backpack to <new_name>'\n" +
+				"backpack_not_in_hand: '&cMake sure you''re holding a backpack in your hand.'\n" +
+				"cooldown: '&cYou can''t spawn a backpack for another <cooldown> seconds.'"
+		if (locale.getString("permission_denied") == null)
+			locale.set("permission_denied", "&cYou don't have permission to do that!");
+		if (locale.getString("backpack_command") == null)
+			locale.set("backpack_command", new String[]{
+					"&a--[Backpacks]--",
+					"&c/backpack get [name]&7: Get a backpack ([name] is optional)",
+					"&c/backpack name <name>&7: Name the backpack you are holding.",
+					"&2Backpacks are physical items. You can carry as many as you want. If you drop a backpack, anyone can pick it up & get the items inside.",
+					"&4WARNING: &cDo NOT rename a backpack with an anvil! You will never be able to access the items inside of it again!"
+			});
+		if (locale.getString("insufficient_funds") == null)
+			locale.set("insufficient_funds", "&cYou need at least $<backpack_cost> to get a backpack!");
+		if (locale.getString("got_backpack_without_price") == null)
+			locale.set("got_backpack_without_price", "&7You gave yourself one backpack.");
+		if (locale.getString("bought_backpack") == null)
+			locale.set("bought_backpack", "&7You bought a backpack for $<backpack_cost>");
+		if (locale.getString("inventory_full") == null)
+			locale.set("inventory_full", "&cYour inventory is too full to give you a backpack!");
+	}
 }
