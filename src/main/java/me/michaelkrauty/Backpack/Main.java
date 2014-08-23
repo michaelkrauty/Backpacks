@@ -130,7 +130,7 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	private void checkUpdate() {
-		Updater updater = new Updater(this, 83139, this.getFile(), Updater.UpdateType.DEFAULT, true);
+		new Updater(this, 83139, this.getFile(), Updater.UpdateType.DEFAULT, true);
 	}
 
 	@EventHandler
