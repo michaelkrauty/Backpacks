@@ -24,6 +24,8 @@ public class Locale {
 		main = instance;
 		checkFile();
 		reload();
+		update();
+		save();
 	}
 
 	private void checkFile() {
@@ -49,6 +51,14 @@ public class Locale {
 	public void reload() {
 		try {
 			locale.load(localeFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void save() {
+		try {
+			locale.save(localeFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -80,10 +90,6 @@ public class Locale {
 	}
 
 	public void update() {
-		// TODO: out of time now, finish later
-				"renamed_backpack: '&7Renamed this backpack to <new_name>'\n" +
-				"backpack_not_in_hand: '&cMake sure you''re holding a backpack in your hand.'\n" +
-				"cooldown: '&cYou can''t spawn a backpack for another <cooldown> seconds.'"
 		if (locale.getString("permission_denied") == null)
 			locale.set("permission_denied", "&cYou don't have permission to do that!");
 		if (locale.getString("backpack_command") == null)
@@ -102,5 +108,11 @@ public class Locale {
 			locale.set("bought_backpack", "&7You bought a backpack for $<backpack_cost>");
 		if (locale.getString("inventory_full") == null)
 			locale.set("inventory_full", "&cYour inventory is too full to give you a backpack!");
+		if (locale.getString("renamed_backpack") == null)
+			locale.set("renamed_backpack", "&7Renamed this backpack to <new_name>");
+		if (locale.getString("backpack_not_in_hand") == null)
+			locale.set("backpack_not_in_hand", "&cMake sure you're holding a backpack in your hand.");
+		if (locale.getString("cooldown") == null)
+			locale.set("cooldown", "&cYou can't spawn a backpack for another <cooldown> seconds.");
 	}
 }

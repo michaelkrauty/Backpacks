@@ -27,6 +27,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -126,15 +130,7 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	private void checkUpdate() {
-		Updater updater = new Updater(this, 83139, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, true);
-		if (updater.shouldUpdate(getDescription().getName() + " v" + getDescription().getVersion(), updater.getLatestName())) {
-			getLogger().info("---[ Backpack Updater ]---");
-			getLogger().info("Backpack is out of date!");
-			getLogger().info("Current Version: " + getDescription().getVersion());
-			getLogger().info("Latest Version: " + updater.getLatestName());
-			getLogger().info("Download the latest version here: " + updater.getLatestFileLink());
-			getLogger().info("--------------------------");
-		}
+		Updater updater = new Updater(this, 83139, this.getFile(), Updater.UpdateType.DEFAULT, true);
 	}
 
 	@EventHandler
