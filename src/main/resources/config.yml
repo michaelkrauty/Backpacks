@@ -1,5 +1,5 @@
 cost: 500
-cooldown: 300
+cooldown: 0
 checkupdate: true
 data: flatfile
 mysql:
