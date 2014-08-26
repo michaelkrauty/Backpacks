@@ -1,5 +1,5 @@
 name: Backpack
-version: 2.5.9
+version: 2.5.10
 author: michaelkrauty
 main: me.michaelkrauty.Backpack.Main
 softdepend: [Vault]

@@ -3,11 +3,7 @@ package me.michaelkrauty.Backpack;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -56,19 +52,19 @@ public class Cooldowns {
 		}
 	}
 
-    public void setCooldown(UUID uuid, int cooldown) {
-        data.set(uuid.toString(), cooldown);
-    }
+	public void setCooldown(UUID uuid, int cooldown) {
+		data.set(uuid.toString(), cooldown);
+	}
 
-    public void deleteEntry(UUID uuid) {
-        data.getConfigurationSection("").set(uuid.toString(), null);
-    }
+	public void deleteEntry(UUID uuid) {
+		data.getConfigurationSection("").set(uuid.toString(), null);
+	}
 
-    public HashMap<UUID, Integer> getCooldowns() {
-        HashMap<UUID, Integer> cooldowns = new HashMap<UUID, Integer>();
-        for (String entry : data.getConfigurationSection("").getKeys(false)) {
+	public HashMap<UUID, Integer> getCooldowns() {
+		HashMap<UUID, Integer> cooldowns = new HashMap<UUID, Integer>();
+		for (String entry : data.getConfigurationSection("").getKeys(false)) {
 			cooldowns.put(UUID.fromString(entry), data.getInt(entry));
-        }
-        return cooldowns;
-    }
+		}
+		return cooldowns;
+	}
 }
