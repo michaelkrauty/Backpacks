@@ -29,21 +29,6 @@ public class Config {
 	private void checkFile() {
 		if (!main.getDataFolder().exists())
 			main.getDataFolder().mkdir();
-		if (!configFile.exists()) {
-			try {
-				configFile.createNewFile();
-				InputStream input = main.getResource("config.yml");
-				OutputStream output = new FileOutputStream(configFile);
-				byte[] buffer = new byte[1024];
-				int bytesRead;
-				while ((bytesRead = input.read(buffer)) > 0) {
-					output.write(buffer, 0, bytesRead);
-				}
-				output.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	public void reload() {
@@ -74,7 +59,7 @@ public class Config {
 			if (config.getString("cost") == null)
 				config.set("cost", 100);
 			if (config.getString("cooldown") == null)
-				config.set("cooldown", 300);
+				config.set("cooldown", 0);
 			config.save(configFile);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -82,7 +82,15 @@ public class Main extends JavaPlugin implements Listener {
 			getLogger().warning("unrecognized data format: " + config.getString("data") + ". Must either be \"flatfile\" or \"mysql\". Using flatfile...");
 
 		try {
-			new me.michaelkrauty.Backpack.Metrics(this).start();
+			Metrics metrics = new me.michaelkrauty.Backpack.Metrics(this);
+			Metrics.Graph graph = metrics.createGraph("Backpacks");
+			graph.addPlotter(new Metrics.Plotter() {
+				@Override
+				public int getValue() {
+					return backpacks.size();
+				}
+			});
+			metrics.start();
 		} catch (IOException e) {
 			getLogger().log(Level.WARNING, "Couldn't start metrics: " + e.getMessage());
 		}
