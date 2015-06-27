@@ -51,15 +51,13 @@ public class BackpackCommand implements CommandExecutor {
 					name = Main.color(name);
 				}
 				if (player.getInventory().firstEmpty() != -1) {
-					if (main.economy != null) {
-						if (!(main.economy.getBalance(player) >= main.cost)) {
+						if (player.getInventory().contains(Material.GOLD_INGOT, main.cost)) {
 							for (String message : main.locale.getMessage("insufficient_funds")) {
 								player.sendMessage(main.color(message));
 							}
 							return true;
 						}
-						main.economy.withdrawPlayer(player, main.cost);
-					}
+					player.getInventory().removeItem(new ItemStack(Material.GOLD_INGOT, main.cost));
 
 					if (main.cooldowns.get(player.getUniqueId()) != null) {
 						if (main.cooldowns.get(player.getUniqueId()) != 0) {

@@ -57,7 +57,7 @@ public class Config {
 			if (config.getString("data") == null)
 				config.set("data", "flatfile");
 			if (config.getString("cost") == null)
-				config.set("cost", 100);
+				config.set("cost", 4);
 			if (config.getString("cooldown") == null)
 				config.set("cooldown", 0);
 			config.save(configFile);
